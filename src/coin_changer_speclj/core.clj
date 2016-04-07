@@ -1,16 +1,17 @@
 (ns coin-changer-speclj.core)
 
+(def coins [25 10 5 1])
+
+(defn find-max-coin [cents]
+  (loop [possible-coins coins]
+    (if (>= cents (first possible-coins))
+      (first possible-coins)
+      (recur (rest possible-coins)))))
+
 (defn make-change [cents]
   (loop [cents  cents
          change []]
     (if (= cents 0)
       change
-      (cond
-        (>= cents 25)
-          (recur (- cents 25) (conj change 25))
-        (>= cents 10)
-          (recur (- cents 10) (conj change 10))
-        (>= cents 5)
-          (recur (- cents 5) (conj change 5))
-        :else
-          (recur (dec cents) (conj change 1))))))
+      (let [coin (find-max-coin cents)]
+        (recur (- cents coin) (conj change coin))))))
